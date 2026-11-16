@@ -1,4 +1,4 @@
-import { getSupabase } from "./supabase";
+import { getSupabaseAdmin } from "./supabase";
 
 export type Source = {
   id: string;
@@ -24,7 +24,7 @@ export type SourceUpdate = Partial<
 
 // Get all sources
 export async function getSources(): Promise<Source[]> {
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase
     .from("sources")
@@ -40,7 +40,7 @@ export async function getSources(): Promise<Source[]> {
 
 // Get active sources only
 export async function getActiveSources(): Promise<Source[]> {
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase
     .from("sources")
@@ -57,7 +57,7 @@ export async function getActiveSources(): Promise<Source[]> {
 
 // Get source by ID
 export async function getSourceById(id: string): Promise<Source | null> {
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase
     .from("sources")
@@ -77,7 +77,7 @@ export async function getSourceById(id: string): Promise<Source | null> {
 
 // Create a new source
 export async function createSource(source: SourceInsert): Promise<Source> {
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase
     .from("sources")
@@ -97,7 +97,7 @@ export async function updateSource(
   id: string,
   updates: SourceUpdate
 ): Promise<Source> {
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase
     .from("sources")
@@ -115,7 +115,7 @@ export async function updateSource(
 
 // Delete a source
 export async function deleteSource(id: string): Promise<void> {
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const { error } = await supabase.from("sources").delete().eq("id", id);
 
@@ -130,7 +130,7 @@ export async function updateScrapeStatus(
   success: boolean,
   error?: string
 ): Promise<void> {
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const updates: SourceUpdate = {
     last_scraped_at: new Date().toISOString(),
@@ -150,7 +150,7 @@ export async function updateScrapeStatus(
 // Ensure curated default tech sources exist in the sources table
 export async function seedDefaultSources(): Promise<number> {
   const { sources: defaultSources } = await import("@/scraper/sources");
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
 
   const existing = await getSources().catch(() => []);
   const existingUrls = new Set(existing.map((s) => s.url));
