@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getArticleById } from "@/lib/articles";
-import { SentimentBadge } from "@/components/sentiment-badge";
-import { LanguageBadge } from "@/components/language-badge";
 import { TranslatedText } from "@/components/language-provider";
+import { ArticleDetailClient } from "@/components/article-detail-client";
 
 export default async function ArticlePage({
   params,
@@ -32,70 +31,7 @@ export default async function ArticlePage({
         <TranslatedText k="article.backToFeed" />
       </Link>
 
-      <article className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-800 dark:bg-gray-900">
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <SentimentBadge sentiment={article.sentiment} />
-          <LanguageBadge language={article.language} />
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {article.source}
-          </span>
-          {article.published_at && (
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              · {new Date(article.published_at).toLocaleDateString()}
-            </span>
-          )}
-        </div>
-
-        <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-          {article.title}
-        </h1>
-
-        {article.summary && (
-          <div className="mb-6 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-            <h2 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-              <TranslatedText k="article.aiSummary" />
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300">
-              {article.summary}
-            </p>
-            {article.enrichment_model && (
-              <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-                <TranslatedText k="article.generatedBy" /> {article.enrichment_model}
-              </p>
-            )}
-          </div>
-        )}
-
-        {article.bias_notes && (
-          <div className="mb-6 rounded-lg bg-yellow-50 p-4 dark:bg-yellow-900/20">
-            <h2 className="mb-2 text-sm font-medium text-yellow-800 dark:text-yellow-200">
-              <TranslatedText k="article.biasNotes" />
-            </h2>
-            <p className="text-sm text-yellow-700 dark:text-yellow-300">
-              {article.bias_notes}
-            </p>
-          </div>
-        )}
-
-        {article.body && (
-          <div className="prose prose-gray dark:prose-invert max-w-none">
-            <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">
-              {article.body}
-            </p>
-          </div>
-        )}
-
-        <div className="mt-8 border-t border-gray-200 pt-6 dark:border-gray-800">
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-          >
-            View original article →
-          </a>
-        </div>
-      </article>
+      <ArticleDetailClient article={article} />
     </div>
   );
 }
