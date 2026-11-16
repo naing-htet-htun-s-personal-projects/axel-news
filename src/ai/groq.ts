@@ -25,28 +25,33 @@ Title: ${title}
 Body: ${body.substring(0, 2000)}
 Language: ${language}`;
 
-  const response = await fetch(GROQ_API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "llama-3.1-8b-instant",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.3,
-      max_tokens: 500,
-    }),
-  });
+  const models = ["openai/gpt-oss-20b", "openai/gpt-oss-120b"];
+  let lastStatus = 0;
 
-  if (!response.ok) {
-    throw new Error(`Groq API error: ${response.status}`);
+  for (const model of models) {
+    const response = await fetch(GROQ_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.3,
+        max_tokens: 500,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const content = data.choices[0]?.message?.content || "";
+      return parseEnrichmentResult(content);
+    }
+    lastStatus = response.status;
   }
 
-  const data = await response.json();
-  const content = data.choices[0]?.message?.content || "";
-
-  return parseEnrichmentResult(content);
+  throw new Error(`Groq API error: ${lastStatus}`);
 }
 
 function parseEnrichmentResult(content: string): EnrichmentResult {
