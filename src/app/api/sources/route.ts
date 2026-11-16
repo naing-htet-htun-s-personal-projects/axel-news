@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { getSources, createSource, SourceInsert } from "@/lib/sources";
 
 export async function GET() {
   try {
-    const { userId } = await auth();
+    const admin = await requireAdmin();
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!admin.ok) {
+      return NextResponse.json({ error: admin.error }, { status: admin.status });
     }
 
     const sources = await getSources();
@@ -23,10 +23,10 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const admin = await requireAdmin();
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!admin.ok) {
+      return NextResponse.json({ error: admin.error }, { status: admin.status });
     }
 
     const body = await request.json();

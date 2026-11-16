@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { getSourceById, updateSource, deleteSource } from "@/lib/sources";
 
 export async function GET(
@@ -7,10 +7,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
+    const admin = await requireAdmin();
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!admin.ok) {
+      return NextResponse.json({ error: admin.error }, { status: admin.status });
     }
 
     const { id } = await params;
@@ -35,10 +35,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
+    const admin = await requireAdmin();
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!admin.ok) {
+      return NextResponse.json({ error: admin.error }, { status: admin.status });
     }
 
     const { id } = await params;
@@ -60,10 +60,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
+    const admin = await requireAdmin();
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!admin.ok) {
+      return NextResponse.json({ error: admin.error }, { status: admin.status });
     }
 
     const { id } = await params;

@@ -35,6 +35,8 @@ export default function AdminSourcesPage() {
   const [editingSource, setEditingSource] = useState<Source | null>(null);
   const [form, setForm] = useState<SourceForm>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -156,6 +158,29 @@ export default function AdminSourcesPage() {
     }
   };
 
+  const handleSyncNow = async () => {
+    setSyncing(true);
+    setError(null);
+    setSyncMessage(null);
+    try {
+      const res = await fetch("/api/cron/scrape", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Sync failed");
+      setSyncMessage(
+        `Synced ${data.sourcesChecked} sources — ${data.articlesSaved} articles updated, ${data.articlesEnriched} enriched.`
+      );
+      const listRes = await fetch("/api/sources");
+      if (listRes.ok) {
+        const list = await listRes.json();
+        setSources(list);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const languageLabel = (lang: string) => {
     if (lang === "my") return "Myanmar";
     if (lang === "en") return "English";
@@ -173,13 +198,29 @@ export default function AdminSourcesPage() {
             Add, edit, or remove news sources for scraping
           </p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-        >
-          + Add Source
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={handleSyncNow}
+            disabled={syncing}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            {syncing ? "Syncing..." : "Sync News Now"}
+          </button>
+          <button
+            onClick={openAddModal}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          >
+            + Add Source
+          </button>
+        </div>
       </div>
+
+      {syncMessage && (
+        <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 dark:border-green-800 dark:bg-green-900/40 dark:text-green-200">
+          {syncMessage}
+        </div>
+      )}
 
       {error && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-900/50 dark:text-red-200">

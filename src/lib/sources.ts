@@ -146,3 +146,32 @@ export async function updateScrapeStatus(
     throw updateError;
   }
 }
+
+// Ensure curated default tech sources exist in the sources table
+export async function seedDefaultSources(): Promise<number> {
+  const { sources: defaultSources } = await import("@/scraper/sources");
+  const supabase = getSupabase();
+
+  const existing = await getSources().catch(() => []);
+  const existingUrls = new Set(existing.map((s) => s.url));
+
+  const missing = defaultSources
+    .filter((s) => !existingUrls.has(s.url))
+    .map((s) => ({
+      name: s.name,
+      url: s.url,
+      rss_url: s.rssUrl ?? null,
+      language: s.language,
+      is_active: true,
+    }));
+
+  if (missing.length === 0) return 0;
+
+  const { error } = await supabase.from("sources").insert(missing);
+  if (error) {
+    console.warn("[Sources] seedDefaultSources failed:", error.message);
+    return 0;
+  }
+
+  return missing.length;
+}

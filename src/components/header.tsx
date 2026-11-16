@@ -45,12 +45,6 @@ export default function Header() {
           >
             {t("nav.saved")}
           </Link>
-          <Link
-            href="/admin/sources"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-          >
-            {t("nav.admin")}
-          </Link>
         </nav>
 
         <div className="flex items-center gap-2.5">
