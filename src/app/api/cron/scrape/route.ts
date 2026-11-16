@@ -6,7 +6,7 @@ import {
   seedDefaultSources,
   updateScrapeStatus,
 } from "@/lib/sources";
-import { parseRSSFeed, stripHTML } from "@/scraper/rss";
+import { fetchOgImage, parseRSSFeed, stripHTML } from "@/scraper/rss";
 import { sources as fallbackSources } from "@/scraper/sources";
 import { enrichUnenrichedArticles } from "@/ai/enrich";
 
@@ -75,10 +75,12 @@ async function runDailyScrape() {
         let insertedForFeed = 0;
         for (const item of topItems) {
           try {
+            const imageUrl = item.imageUrl || (await fetchOgImage(item.url));
             await upsertArticle({
               url: item.url,
               title: item.title.trim(),
               body: stripHTML(item.body).slice(0, 4000) || null,
+              image_url: imageUrl,
               source: feed.name,
               language: feed.language,
               published_at: item.publishedAt

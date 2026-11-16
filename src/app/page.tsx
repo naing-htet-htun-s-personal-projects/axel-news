@@ -1,7 +1,11 @@
 import { getArticles, Article } from "@/lib/articles";
 import { ArticleFeed } from "@/components/article-feed";
+import { getServerTranslations } from "@/lib/i18n-server";
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const { t } = await getServerTranslations();
   let articles: Article[] = [];
   let error: string | null = null;
 
@@ -17,10 +21,10 @@ export default async function Home() {
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Latest News
+          {t("feed.title")}
         </h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Myanmar IT and tech news, curated and enriched
+          {t("feed.subtitle")}
         </p>
       </div>
 
