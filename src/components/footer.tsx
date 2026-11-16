@@ -1,4 +1,10 @@
+"use client";
+
+import { useLanguage } from "@/components/language-provider";
+
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
       <div className="mx-auto max-w-6xl px-4 py-8">
@@ -8,13 +14,13 @@ export default function Footer() {
               Axel News
             </span>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Myanmar IT News
+              {t("footer.tagline")}
             </span>
           </div>
 
           <div className="flex items-center gap-6">
             <a
-              href="https://github.com"
+              href="https://github.com/NaingHtetHtun/axel-news"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -22,7 +28,7 @@ export default function Footer() {
               GitHub
             </a>
             <span className="text-sm text-gray-400 dark:text-gray-500">
-              Built with Next.js
+              {t("footer.builtWith")}
             </span>
           </div>
         </div>

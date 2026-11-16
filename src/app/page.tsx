@@ -1,6 +1,5 @@
 import { getArticles, Article } from "@/lib/articles";
-import { ArticleCard } from "@/components/article-card";
-import { ArticleCardSkeleton } from "@/components/article-card-skeleton";
+import { ArticleFeed } from "@/components/article-feed";
 
 export default async function Home() {
   let articles: Article[] = [];
@@ -32,10 +31,14 @@ export default async function Home() {
           </h2>
           <p className="mb-4 text-sm text-blue-800 dark:text-blue-200">
             To get started, configure your Supabase and Clerk environment
-            variables in <code className="rounded bg-blue-100 px-1 dark:bg-blue-800">.env.local</code>:
+            variables in{" "}
+            <code className="rounded bg-blue-100 px-1 dark:bg-blue-800">
+              .env.local
+            </code>
+            :
           </p>
           <pre className="overflow-x-auto rounded bg-blue-100 p-3 text-xs text-blue-900 dark:bg-blue-800 dark:text-blue-100">
-{`NEXT_PUBLIC_SUPABASE_URL=your-url
+            {`NEXT_PUBLIC_SUPABASE_URL=your-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-key
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-key
 CLERK_SECRET_KEY=your-secret`}
@@ -43,15 +46,7 @@ CLERK_SECRET_KEY=your-secret`}
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {articles.length > 0
-          ? articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))
-          : Array.from({ length: 6 }).map((_, i) => (
-              <ArticleCardSkeleton key={i} />
-            ))}
-      </div>
+      <ArticleFeed initialArticles={articles} />
     </div>
   );
 }

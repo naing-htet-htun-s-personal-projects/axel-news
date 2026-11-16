@@ -11,7 +11,8 @@
     "scrape:install": "playwright install chromium",
     "enrich": "tsx src/ai/worker.ts",
     "embed": "tsx src/ai/embedding-worker.ts",
-    "embed:status": "tsx src/ai/embedding-worker.ts status"
+    "embed:status": "tsx src/ai/embedding-worker.ts status",
+    "migrate": "npx supabase db push"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.6.4",
@@ -32,6 +33,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
+    "supabase": "^2.111.0",
     "tailwindcss": "^4",
     "tsx": "^4",
     "typescript": "^5"

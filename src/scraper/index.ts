@@ -1,4 +1,6 @@
-require("dotenv").config({ path: ".env.local" });
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
 
 import { chromium, Browser, Page } from "playwright";
 import { SourceConfig, sources as defaultSources } from "./sources";

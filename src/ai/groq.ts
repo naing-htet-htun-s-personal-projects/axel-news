@@ -46,13 +46,10 @@ Language: ${language}`;
   const data = await response.json();
   const content = data.choices[0]?.message?.content || "";
 
-  return parseEnrichmentResult(content, "groq");
+  return parseEnrichmentResult(content);
 }
 
-function parseEnrichmentResult(
-  content: string,
-  model: string
-): EnrichmentResult {
+function parseEnrichmentResult(content: string): EnrichmentResult {
   try {
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {

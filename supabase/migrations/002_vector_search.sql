@@ -1,26 +1,21 @@
 -- Axel News: Vector Search
--- Run this in Supabase SQL Editor
--- Requires pgvector extension (available on Supabase free tier)
+-- Requires pgvector extension (enable via Dashboard > Database > Extensions)
 
 -- Enable pgvector extension
 create extension if not exists vector with schema extensions;
 
 -- Add embedding column to articles table
--- Using 1536 dimensions for OpenAI-compatible embeddings
--- Can be changed to 768 for other models
-alter table articles add column if not exists embedding vector(1536);
+-- Using 768 dimensions for Google Gemini text-embedding-004
+alter table articles add column if not exists embedding extensions.vector(768);
 
 -- Create index for vector similarity search
--- Using ivfflat for faster approximate nearest neighbor search
--- Adjust lists based on your data size (start with sqrt(total_rows))
-create index articles_embedding_idx on articles
-  using ivfflat (embedding vector_cosine_ops)
+create index if not exists articles_embedding_idx on articles
+  using ivfflat (embedding extensions.vector_cosine_ops)
   with (lists = 100);
 
 -- Function: Search articles by semantic similarity
--- Takes a query embedding and returns similar articles
 create or replace function search_articles(
-  query_embedding vector(1536),
+  query_embedding extensions.vector(768),
   match_count int default 10,
   match_threshold float default 0.5
 )
@@ -49,16 +44,15 @@ as $$
     published_at,
     summary,
     sentiment,
-    1 - (articles.embedding <=> query_embedding) as similarity
+    1 - (embedding operator(extensions.<=>) query_embedding) as similarity
   from articles
-  where articles.embedding is not null
-    and 1 - (articles.embedding <=> query_embedding) > match_threshold
-  order by articles.embedding <=> query_embedding
+  where embedding is not null
+    and 1 - (embedding operator(extensions.<=>) query_embedding) > match_threshold
+  order by embedding operator(extensions.<=>) query_embedding
   limit match_count;
 $$;
 
 -- Function: Get article embedding status
--- Shows how many articles have embeddings
 create or replace function get_embedding_status()
 returns table (
   total_articles bigint,
@@ -77,10 +71,6 @@ as $$
     end as percentage
   from articles;
 $$;
-
--- RLS policies for search function
--- The function already respects existing RLS on articles table
--- Public can search (read access), only authenticated can update embeddings
 
 -- Grant execute permissions
 grant execute on function search_articles to anon;

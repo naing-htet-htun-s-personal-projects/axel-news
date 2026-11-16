@@ -1,4 +1,6 @@
-require("dotenv").config({ path: ".env.local" });
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
 
 // Embedding generation worker
 // Generates vector embeddings for articles that don't have them yet

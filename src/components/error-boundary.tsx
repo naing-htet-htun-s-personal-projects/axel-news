@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 type ErrorBoundaryProps = {
   children: React.ReactNode;

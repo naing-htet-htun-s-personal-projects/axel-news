@@ -1,7 +1,7 @@
 export type SourceConfig = {
   name: string;
   url: string;
-  rssUrl?: string; // RSS feed URL (preferred if available)
+  rssUrl?: string;
   selector: {
     articleLink: string;
     title: string;
@@ -13,27 +13,39 @@ export type SourceConfig = {
 
 export const sources: SourceConfig[] = [
   {
-    name: "Myanmar Tech",
-    url: "https://myanmar-tech.com",
-    rssUrl: "https://myanmar-tech.com/feed", // Common WordPress RSS path
+    name: "Myanmar Tech Press (English)",
+    url: "https://en.myanmartechpress.com",
+    rssUrl: "https://en.myanmartechpress.com/feed/",
     selector: {
-      articleLink: "article a",
-      title: "h1",
-      body: "article-content",
-      publishedAt: "time",
+      articleLink: "article a, .post-title a, h2 a",
+      title: "h1, .entry-title, .post-title",
+      body: ".entry-content, .post-content, article",
+      publishedAt: "time, .post-date, .entry-meta time",
+    },
+    language: "en",
+  },
+  {
+    name: "Myanmar Tech Press (Myanmar)",
+    url: "https://mm.myanmartechpress.com",
+    rssUrl: "https://mm.myanmartechpress.com/feed/",
+    selector: {
+      articleLink: "article a, .post-title a, h2 a",
+      title: "h1, .entry-title, .post-title",
+      body: ".entry-content, .post-content, article",
+      publishedAt: "time, .post-date, .entry-meta time",
     },
     language: "my",
   },
   {
-    name: "IT Voice Myanmar",
-    url: "https://itvoicemyanmar.com",
-    rssUrl: "https://itvoicemyanmar.com/feed", // Common WordPress RSS path
+    name: "Build Myanmar Media (Tech)",
+    url: "https://www.buildmyanmarmedia.com/tag/tech/",
+    rssUrl: "https://www.buildmyanmarmedia.com/tag/tech/feed/",
     selector: {
-      articleLink: ".post-title a",
-      title: ".entry-title",
-      body: ".entry-content",
-      publishedAt: ".post-date",
+      articleLink: "article a, .post-title a, h2 a",
+      title: "h1, .entry-title, .post-title",
+      body: ".entry-content, .post-content, article",
+      publishedAt: "time, .post-date, .entry-meta time",
     },
-    language: "en",
+    language: "my",
   },
 ];

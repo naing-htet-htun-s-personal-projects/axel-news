@@ -7,7 +7,7 @@ export type EnrichmentResult = {
 
 export type LLMProvider = "groq" | "gemini" | "ollama";
 
-const ENRICHMENT_PROMPT = `Analyze this news article and provide:
+export const ENRICHMENT_PROMPT = `Analyze this news article and provide:
 1. A 2-3 sentence summary
 2. Sentiment (positive, neutral, or negative)
 3. Any bias notes (empty string if none)

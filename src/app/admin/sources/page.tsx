@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 type Source = {
   id: string;
@@ -36,24 +36,26 @@ export default function AdminSourcesPage() {
   const [form, setForm] = useState<SourceForm>(emptyForm);
   const [saving, setSaving] = useState(false);
 
-  const fetchSources = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch("/api/sources");
-      if (!res.ok) throw new Error("Failed to fetch sources");
-      const data = await res.json();
-      setSources(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchSources();
-  }, [fetchSources]);
+    let active = true;
+    fetch("/api/sources")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch sources");
+        return res.json();
+      })
+      .then((data) => {
+        if (active) setSources(data);
+      })
+      .catch((e) => {
+        if (active) setError(e instanceof Error ? e.message : "Unknown error");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleToggleActive = async (source: Source) => {
     try {

@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Myanmar } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ClerkProvider } from "@/lib/clerk-provider";
 import { PostHogProvider } from "@/lib/posthog";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
+import { LanguageProvider } from "@/components/language-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,6 +16,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const notoSansMyanmar = Noto_Sans_Myanmar({
+  variable: "--font-myanmar",
+  subsets: ["myanmar"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -51,13 +58,18 @@ export default function RootLayout({
       <PostHogProvider>
         <html
           lang="en"
-          className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} ${notoSansMyanmar.variable} h-full antialiased`}
         >
-          <body className="min-h-full flex flex-col bg-gray-50 dark:bg-gray-950">
-            <ServiceWorkerRegistration />
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+          <body
+            className="min-h-full flex flex-col bg-gray-50 font-sans dark:bg-gray-950"
+            suppressHydrationWarning
+          >
+            <LanguageProvider>
+              <ServiceWorkerRegistration />
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </LanguageProvider>
           </body>
         </html>
       </PostHogProvider>

@@ -37,7 +37,8 @@ export async function getArticles({
   let query = supabase
     .from("articles")
     .select("*")
-    .order("published_at", { ascending: false })
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: true })
     .range((page - 1) * limit, page * limit - 1);
 
   if (source) {
