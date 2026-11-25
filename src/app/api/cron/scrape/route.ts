@@ -20,8 +20,12 @@ async function isAuthorizedCron(req: NextRequest): Promise<boolean> {
     return true;
   }
 
-  // Allow Vercel's built-in cron invocation header when CRON_SECRET is not set
-  if (!cronSecret && req.headers.get("x-vercel-cron") === "1") {
+  // Allow Vercel's built-in cron invocation when CRON_SECRET is not set
+  const userAgent = (req.headers.get("user-agent") || "").toLowerCase();
+  if (
+    !cronSecret &&
+    (userAgent.includes("vercel-cron") || req.headers.get("x-vercel-cron") === "1")
+  ) {
     return true;
   }
 
